@@ -1,0 +1,50 @@
+
+    model {
+
+    #### Prior distributions
+    beta0 ~ dnorm(0, 0.01)
+    tau ~ dgamma(0.1, 0.1)
+    alpha0 ~ dnorm(0, 0.01)
+    alpha1 ~ dnorm(0, 0.01)
+    alpha2 ~ dnorm(0, 0.01)
+    sigma <- sqrt(1/tau)
+    xpsi[1] ~ dunif(0, 1)
+    xpsi[2] ~ dunif(0, 1)
+
+    for(jj in 1:nStops){
+      logit(p[jj]) <- alpha0 + alpha1 * stop[jj] + alpha2 * stop2[jj] #<- 1 # ~ dunif(0, 1)#   
+    }
+ 
+
+    for (ii in 1:nRoutes) {
+    
+    eta[ii] ~ dnorm(0, tau)
+    log(lambda[ii]) <- beta0 + eta[ii]
+
+    #### State process
+    #### Observation process
+    ##  y: local availability  -- 0=locally unavailable,  1=locally available
+    y[ii, 1] ~ dbern(xpsi[1]/(xpsi[1] + (1 - xpsi[2])))
+    
+    ##  y1: local availability|global presence -- 0=locally unavailable,  1=locally available
+    y1[ii, 1] <- y[ii, 1] + 1
+    h[ii, 1] ~ dpois(lambda[ii] * pi[ii, 1])
+    
+    ## Availability at stops 2-nStops
+    for (jj in 2:nStops) {
+      y[ii, jj] ~ dbern(xpsi[y1[ii, jj - 1]])
+      y1[ii, jj] <- y[ii, jj] + 1
+      h[ii, jj] ~ dpois(lambda[ii] * pi[ii, jj])
+    } # jj
+    
+     ns[ii] <- ifelse(sum(y[ii,]) == 0, C, sum(y[ii, ]))
+     for(jj in 1:nStops){
+      pi[ii, jj] <- (p[jj]/ns[ii]) * y[ii,jj]
+     }
+
+    N[ii] ~ dpois(lambda[ii])
+    
+    } # ii
+    
+    }
+    
