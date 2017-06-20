@@ -39,18 +39,22 @@ cat("
 
 
       ## Total number of available stops
-      ns[ii] <- sum(y[ii,]) + 0.0001
+      ns[ii] <- sum(y[ii,]) + C
 
 
       ## Multinomial cell probabilities
-      for(jj in 1:nStops){
+      pi[ii, 1] <- p[1] * (y[ii, 1]/ns[ii]) + C
+      pic[ii, 1] <- pi[ii, 1] / pcap[ii]
+
+      for(jj in 2:nStops){
         pi[ii, jj] <- p[jj] * (y[ii, jj]/ns[ii])
-        pic[ii, jj] <- pi[ii, jj] / pcap[ii] + 0.00001
+        pic[ii, jj] <- pi[ii, jj] / pcap[ii]
       }
 
 
       ## Total 'capture' probability
-      pcap[ii] <- sum(pi[ii,]) + 0.0001
+      pcap[ii] <- sum(pi[ii,])
+
 
       ## Multinomial likelihood
       h[ii, 1:nStops] ~ dmulti(pic[ii, 1:nStops], n[ii])

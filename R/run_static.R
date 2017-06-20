@@ -13,7 +13,7 @@ run_static <- function(sim_data, nC = 3, nI = 30000, nB = 10000, nT = 20, Parall
 
   jags.data <- list(h = sim_data$h, nRoutes = dim(sim_data$h)[1], nStops = dim(sim_data$h)[2],
                     n = sim_data$n, stop = sim_data$stop, stop2 = sim_data$stop2,
-                    X = sim_data$X, C = 10^6)
+                    X = sim_data$X, C = 10^-6)
 
   jags.param <- c("xpsi", "beta0", "beta1", "sigma", "alpha0", "alpha1", "alpha2", "p", "lambda", "N")
 
