@@ -3,14 +3,14 @@ cat("
     model {
 
     #### Prior distributions
-    beta0 ~ dnorm(0, 0.01)T(-10, 10)
-    beta1 ~ dnorm(0, 0.01)T(-10, 10)
+    beta0 ~ dnorm(0, 0.1)T(-10, 10)
+    beta1 ~ dnorm(0, 0.1)T(-10, 10)
     tau ~ dgamma(0.1, 0.1)
     sigma <- sqrt(1/tau)
 
-    alpha0 ~ dnorm(0, 0.01)T(-10, 10)
-    alpha1 ~ dnorm(0, 0.01)T(-10, 10)
-    alpha2 ~ dnorm(0, 0.01)T(-10, 10)
+    alpha0 ~ dnorm(0, 0.1)T(-10, 10)
+    alpha1 ~ dnorm(0, 0.1)T(-10, 10)
+    alpha2 ~ dnorm(0, 0.1)T(-10, 10)
 
     xpsi[1] ~ dunif(0, 1)
     xpsi[2] ~ dunif(0, 1)
@@ -45,13 +45,12 @@ cat("
       ## Multinomial cell probabilities
       for(jj in 1:nStops){
         pi[ii, jj] <- p[jj] * (y[ii, jj]/ns[ii])
-        pic[ii, jj] <- pi[ii, jj] / pcap[ii]
+        pic[ii, jj] <- pi[ii, jj] / pcap[ii] + 0.00001
       }
 
 
       ## Total 'capture' probability
-      pcap[ii] <- sum(pi[ii,]) + 0.001
-
+      pcap[ii] <- sum(pi[ii,]) + 0.0001
 
       ## Multinomial likelihood
       h[ii, 1:nStops] ~ dmulti(pic[ii, 1:nStops], n[ii])
